@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Auth.css";
@@ -95,3 +96,91 @@ const Signup = () => {
 };
 
 export default Signup;
+=======
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import "./Auth.css";
+import { v4 as uuidv4 } from "uuid";
+
+const Signup = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      // Store user credentials in local storage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: uuidv4(),
+          email: email,
+          password: password,
+          name: name,
+        })
+      );
+
+      navigate("/");
+    } catch (error) {
+      setError("Failed to create an account. " + error.message);
+      console.error("Signup error:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <h1 className="auth-title">CREATE ACCOUNT</h1>
+
+      {error && <div className="error-message">{error}</div>}
+
+      <form onSubmit={handleSignup}>
+        <div className="input-group">
+          <div className="input-icon">
+            <span>👤</span>
+          </div>
+          <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+        </div>
+
+        <div className="input-group">
+          <div className="input-icon">
+            <span>@</span>
+          </div>
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </div>
+
+        <div className="input-group">
+          <div className="input-icon">
+            <span>🔒</span>
+          </div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button type="submit" className="auth-button" disabled={loading}>
+          {loading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}
+        </button>
+      </form>
+
+      <p className="auth-link">
+        Already have an account? <Link to="/login">Login</Link>
+      </p>
+    </div>
+  );
+};
+
+export default Signup;
+>>>>>>> 035e71d4fcdfde2ccbe041222a157dc6cf69c450

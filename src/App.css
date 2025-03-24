@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400&display=swap");
 
 * {
@@ -436,3 +437,154 @@ input:focus {
     width: 100%;                     /* Full width fields on mobile */
   }
 }
+=======
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: linear-gradient(90deg, #fcff9e 0%, #c67700 100%);
+  background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 2.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 1rem;
+}
+
+h1 span {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  margin-left: 3px;
+  margin-top: 0.2rem;
+}
+
+.main {
+  max-width: 500px;
+  min-width: 400px;
+  background-color: #ff6666;
+  color: #f1f1f1;
+  padding: 1rem;
+}
+
+.todo-list {
+  list-style-type: none;
+  overflow-y: auto;
+  max-height: 400px;
+  scrollbar-color: #333 #ff6666;
+  scrollbar-width: thin;
+}
+
+.todo {
+  display: flex;
+  justify-content: space-between; /* Distribute the columns evenly */
+  align-items: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-column {
+  flex: 0 0 20%; /* Checkbox takes up 20% of the width */
+  display: flex;
+  justify-content: center; /* Center the checkbox */
+}
+
+.task-details {
+  flex: 1; /* Takes up the remaining space */
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-details {
+  display: flex; /* Use flexbox to align items horizontally */
+  gap: 1rem; /* Add some space between the items */
+  margin-top: 0.5rem; /* Space between the title and details */
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  padding: 0.25rem;
+  border: none;
+  color: #fff;
+}
+
+input {
+  padding: 0 0.5em;
+  height: 3rem;
+  width: 100%;
+}
+
+.todo-create {
+  margin-top: 1.5rem;
+}
+.todo-edit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.completed {
+  text-decoration: line-through;
+}
+
+/* Style for small checkbox */
+.todo input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #ff6666; /* Optional: checkbox color match */
+  cursor: pointer;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* Style for category, priority, and due date */
+.todo .category,
+.todo .priority,
+.todo .due-date {
+  font-size: 0.7rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+>>>>>>> 035e71d4fcdfde2ccbe041222a157dc6cf69c450

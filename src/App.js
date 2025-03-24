@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
@@ -145,3 +146,78 @@ const App = () => {
 };
 
 export default App;
+=======
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./components/Login"; // Ensure correct import
+import Signup from "./components/Signup"; // Import Signup component
+import TodoList from "./components/TodoList";
+import TodoCreate from "./components/TodoCreate";
+import "./App.css";
+
+const App = () => {
+  const [todos, setTodos] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is already authenticated on app load
+    // This effect runs once when the component mounts
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  const createTodo = (title, category, priority, dueDate) => {
+    const newTodo = {
+      id: crypto.randomUUID(),
+      title,
+      completed: false,
+      category,
+      priority,
+      dueDate,
+    };
+    setTodos([...todos, newTodo]);
+  };
+
+  const removeTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const changeTodo = (id, title, completed, category, priority, dueDate) => {
+    const updatedTodo = { id, title, completed, category, priority, dueDate };
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === id ? updatedTodo : todo))
+    );
+  };
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <main className="main">
+                <h1>My Todo Lists</h1>
+                <TodoList todos={todos} removeTodo={removeTodo} changeTodo={changeTodo} />
+                <TodoCreate createTodo={createTodo} />
+              </main>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
+>>>>>>> 035e71d4fcdfde2ccbe041222a157dc6cf69c450
