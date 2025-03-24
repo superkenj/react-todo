@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState } from "react";
 
 const TodoCreate = ({ createTodo }) => {
@@ -75,65 +74,3 @@ const TodoCreate = ({ createTodo }) => {
 };
 
 export default TodoCreate;
-=======
-import { useState } from "react";
-
-const TodoCreate = ({ createTodo }) => {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Personal");
-  const [priority, setPriority] = useState("Medium");
-  const [dueDate, setDueDate] = useState("");
-
-  const handleChangeTitle = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleChangeCategory = (e) => {
-    setCategory(e.target.value);
-  };
-
-  const handleChangePriority = (e) => {
-    setPriority(e.target.value);
-  };
-
-  const handleChangeDueDate = (e) => {
-    setDueDate(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    createTodo(title, category, priority, dueDate);
-    setTitle("");
-    setCategory("Personal");
-    setPriority("Medium");
-    setDueDate("");
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="todo-create">
-      <input
-        type="text"
-        name="title"
-        id="title"
-        placeholder="Enter a todo"
-        value={title}
-        onChange={handleChangeTitle}
-      />
-      <select value={category} onChange={handleChangeCategory}>
-        <option value="Chores">Chores</option>
-        <option value="Work">Work</option>
-        <option value="Personal">Personal</option>
-      </select>
-      <select value={priority} onChange={handleChangePriority}>
-        <option value="Low">Low</option>
-        <option value="Medium">Medium</option>
-        <option value="High">High</option>
-      </select>
-      <input type="date" value={dueDate} onChange={handleChangeDueDate} />
-      <button type="submit">Add Todo</button>
-    </form>
-  );
-};
-
-export default TodoCreate;
->>>>>>> 035e71d4fcdfde2ccbe041222a157dc6cf69c450
