@@ -1,0 +1,111 @@
+.auth-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d2d3a;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+/* ✅ Box around buttons */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border: 2px solid #7c5cff;   /* Box border */
+  border-radius: 10px;          /* Rounded corners */
+  padding: 20px;                /* Padding inside the box */
+  background: #f0e6ff;          /* Light background */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  transition: transform 0.3s;
+}
+
+.button-container:hover {
+  transform: scale(1.03);
+}
+
+.auth-button {
+  width: 250px;
+  padding: 15px;
+  background-color: #1f9f4f;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.auth-button:hover {
+  background-color: #226438;
+}
+
+.auth-button:disabled {
+  background-color: #b3a3e0;
+  cursor: not-allowed;
+}
+
+.auth-link {
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.auth-link a {
+  color: #4e9cd7;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.offline-message {
+  background-color: #e0f7fa;
+  color: #0097a7;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px; /* Spacing between icon and title */
+}
+
+.app-icon {
+  width: 80px;        /* Adjust icon size */
+  height: 80px;
+  object-fit: contain; /* Ensures the icon maintains its aspect ratio */
+}
+
+.icon-container2 {
+  display: flex;
+}
+
+.app-icon2 {
+  width: 45px;        /* Adjust icon size */
+  height: 45px;
+  object-fit: contain; /* Ensures the icon maintains its aspect ratio */
+}

@@ -1,0 +1,434 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  justify-content: center;        /* Center content vertically */
+  align-items: center;            /* Center content horizontally */
+  flex-direction: column;         /* Stack children vertically */
+  margin: 0;                      /* Remove auto margin */
+  min-height: 100vh;             /* Use dynamic viewport height for consistency */
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  color: #333; /* Neutral color */
+}
+
+h1 span {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  margin-left: 3px;
+  margin-top: 0.2rem;
+}
+
+/* Todo List - Flexible Scrolling */
+.todo-list {
+  overflow-y: auto;               /* Enable scrolling */
+  min-height: 50vh;               /* Adjust min-height for smaller screens */
+  max-height: 70vh;               /* Limit max height for better balance */
+  scrollbar-color: #ccc #f1f1f1;  
+  scrollbar-width: thin;
+  padding-right: 10px;            /* Space for scroll */
+}
+
+/* ✅ Bold and larger todo title */
+.todo .task-details > p {
+  font-size: 1rem;                     
+  font-weight: bold;                   
+  color: #333;                         
+  margin-bottom: 5px;
+}
+
+/* Todo container adjustments */
+.todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 5px;
+  transition: all 0.3s;
+  box-sizing: border-box;
+  min-width: 100%;
+  gap: 12px;                      /* Consistent spacing */
+  padding-right: 20px;            /* Space for scroll gap */
+}
+
+.todo:hover {
+  background: #e0e0e0;                  
+}
+
+/* Checkbox column: smaller and left-aligned */
+.checkbox-column {
+  flex: 0 0 12%;                 /* Reduce width for symmetry */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Task details: takes up remaining space */
+.task-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ✅ Priority, Category, and Due Date consistent styling */
+.todo-details-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;              
+  margin-bottom: 5px;      /* Space between row and due date */
+  font-size: 0.9rem;       /* Uniform font size */
+  color: #555;            
+  flex-wrap: nowrap;      
+}
+
+.todo .priority-box,
+.todo .category {
+  font-size: 0.8rem;      /* Uniform size for all */
+  color: #555;            /* Medium gray text */
+  margin: 0;              
+}
+
+.todo .due-date {
+  font-size: 0.9rem !important;   /* Consistent size */
+  font-weight: normal !important; /* Override bold */
+  color: #555;                     /* Same color as priority and category */
+  margin: 0;                       
+}
+
+.todo .priority-box {
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 80px;
+  text-align: center;
+  color: white;
+}
+
+.todo .priority-box.low {
+  background: #4caf50;    /* Green for Low priority */
+}
+
+.todo .priority-box.medium {
+  background: #ffc107;    /* Yellow for Medium priority */
+}
+
+.todo .priority-box.high {
+  background: #f44336;    /* Red for High priority */
+}
+
+.actions {
+  display: flex;
+  gap: 8px;                     /* Space between buttons */
+  justify-content: flex-end;     /* Push buttons to the right */
+  align-items: center;
+  margin-right: 12px;            /* Space between buttons and scroll */
+}
+
+/* ✅ Add Todo button (green) */
+.add-btn {
+  background: #4caf50;                 
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.add-btn:hover {
+  background: #45a049;                 
+}
+
+/* Individual button styling */
+.edit-btn, .delete-btn {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 0.7rem;
+}
+
+/* Edit button (blue) */
+.edit-btn {
+  background: lightblue;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #1976d2;
+}
+
+/* Delete button (red) */
+.delete-btn {
+  background: lightcoral;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #d32f2f;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+input {
+  padding: 0.5rem;                /* Consistent padding */
+  font-size: 1rem;                /* Text size */
+  border: 1px solid #ccc;         /* Border styling */
+  border-radius: 5px;             /* Rounded corners */
+  transition: border 0.3s;        
+  width: 100%;                    /* Full width */
+  box-sizing: border-box;         /* Include padding in width */
+  height: auto;                    /* Flexible height */
+  min-height: 40px;               /* Ensure minimum touch-friendly height */
+}
+
+input:focus {
+  border-color: #4caf50;               
+  outline: none;
+}
+
+.todo-edit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #999;                         
+}
+
+/* ✅ Small checkbox style */
+.todo input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4caf50;               
+  cursor: pointer;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.priority-box {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;           /* Uniform size */
+  text-align: center;
+  display: inline-block;
+  min-width: 60px;
+  background: #e0e0e0;                 
+  color: #333;                          
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100px;
+  background: #8AB2A6;
+  color: white;
+  padding: 10px 20px;
+}
+
+/* Inner flex container: Handles item alignment */
+.headerBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%; /* Fills the parent (.header) */
+}
+
+.listBlock {
+  margin-top: 120px;
+  margin-bottom: 180px;
+}
+
+.createBlock,
+.todo-create {
+  position: fixed;
+  display: block;
+  bottom: 0;
+  height: 150px;
+  justify-content: space-between;
+  align-items: center;
+  background: #8AB2A6;
+  width: 100%;
+  border-top: 10px solid #6d9085; /* Add a border to the top */
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.logout-btn {
+  background: #f39e98;                  
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #d32f2f;                  
+}
+
+.sort-dropdown {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.sort-dropdown label {
+  margin-right: 10px;
+  font-size: 1rem;
+  color: #333;                          
+}
+
+.sort-dropdown select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #333;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sort-dropdown select:hover {
+  background: #f1f1f1;
+}
+
+/* ✅ Notification styling */
+.notification {
+  background: #4caf50;                  
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeInOut 4s linear;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* ✅ Styling for the row layout */
+.todo-row {
+  display: flex;
+  justify-content: space-between; /* Spread items evenly */
+  align-items: center; 
+  gap: 2vw;                      /* Even spacing */
+  margin-bottom: 1rem;
+  padding: 0 2vw;                /* Add padding for consistent margin on both sides */
+}
+
+/* ✅ Individual field styling */
+.todo-field {
+  display: flex;
+  flex-direction: column;         /* Label above input/select */
+  width: 22vw;                    /* Uniform width */
+  min-width: 180px;               /* Prevent shrinking on smaller screens */
+}
+
+/* ✅ Label styling */
+.todo-field label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: #555;                    /* Gray label color */
+}
+
+/* ✅ Select and date input styling */
+.todo-field select,
+.todo-field input[type="date"],
+.todo-field button {
+  padding: 0.5rem;                /* Consistent padding */
+  font-size: 1rem;                /* Uniform text size */
+  border: 1px solid #ccc;         /* Border styling */
+  border-radius: 5px;             /* Rounded corners */
+  transition: border 0.3s;        
+  width: 100%;                    /* Full width */
+  box-sizing: border-box;         /* Include padding in width */
+  height: 45px;                    /* Uniform height */
+}
+
+/* ✅ Button styling */
+.todo-field button {
+  background: #4caf50;            /* Green button */
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+  border: none;
+}
+
+.todo-field button:hover {
+  background: #45a049;            /* Darker green on hover */
+}
+
+.todo-field button:disabled {
+  background: #ccc;               /* Disabled button */
+  cursor: not-allowed;
+}
+
+/* ✅ Add smooth hover effect */
+.todo-field select:hover,
+.todo-field input[type="date"]:hover {
+  border-color: #4caf50;
+}
+
+/* ✅ Add focus outline */
+.todo-field select:focus,
+.todo-field input[type="date"]:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+@media (max-width: 768px) {
+  .createBlock,
+  .todo-create {
+    position: fixed;
+    display: block;
+    bottom: 0;
+    height: auto;                    /* Flexible height */
+    min-height: 150px;               /* Maintain minimum height */
+    justify-content: space-between;
+    align-items: center;
+    background: #8AB2A6;
+    width: 100%;                     /* Full width, no side margin */
+    margin: 0;                       /* Remove all margins */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for better separation */
+    border-radius: 10px 10px 0 0;    /* Rounded corners on top */
+  }
+
+  .todo-row {
+    flex-direction: column;          /* Stack fields vertically on mobile */
+    gap: 15px;                       /* Spacing between fields */
+  }
+
+  .todo-field {
+    width: 100%;                     /* Full width fields on mobile */
+  }
+}
