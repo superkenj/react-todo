@@ -13,16 +13,33 @@
   letter-spacing: 1px;
 }
 
+/* Ensure container has enough space */
+.icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+/* Make the logo significantly larger - 240px */
+.app-icon {
+  width: 180px !important;
+  height: 180px !important;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
 /* ✅ Box around buttons */
 .button-container {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
-  border: 2px solid #7c5cff;   /* Box border */
-  border-radius: 10px;          /* Rounded corners */
-  padding: 20px;                /* Padding inside the box */
-  background: #f0e6ff;          /* Light background */
+  border: 2px solid #7c5cff; /* Box border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 20px; /* Padding inside the box */
+  background: #f0e6ff; /* Light background */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
   transition: transform 0.3s;
@@ -88,24 +105,14 @@
   font-size: 0.9rem;
 }
 
-.icon-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 15px; /* Spacing between icon and title */
+.input-group {
+  margin-bottom: 16px;
 }
 
-.app-icon {
-  width: 80px;        /* Adjust icon size */
-  height: 80px;
-  object-fit: contain; /* Ensures the icon maintains its aspect ratio */
-}
-
-.icon-container2 {
-  display: flex;
-}
-
-.app-icon2 {
-  width: 45px;        /* Adjust icon size */
-  height: 45px;
-  object-fit: contain; /* Ensures the icon maintains its aspect ratio */
+.input-group input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
 }

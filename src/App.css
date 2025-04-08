@@ -6,49 +6,54 @@
   box-sizing: border-box;
 }
 
+/* Base light mode (default) */
 body {
   font-family: "Poppins", sans-serif;
   font-size: 1rem;
   line-height: 1.5;
-  justify-content: center;        /* Center content vertically */
-  align-items: center;            /* Center content horizontally */
-  flex-direction: column;         /* Stack children vertically */
-  margin: 0;                      /* Remove auto margin */
-  min-height: 100vh;             /* Use dynamic viewport height for consistency */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  flex-direction: column; /* Stack children vertically */
+  margin: 0; /* Remove auto margin */
+  min-height: 100vh; /* Use dynamic viewport height for consistency */
+  background-color: #ffffff;
+  color: #000000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode */
+body.dark-mode {
+  background-color: #1d1d1d; /* Not too black */
+  color: #ffffff;
 }
 
 h1 {
   font-weight: normal;
   font-size: 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
-  color: #333; /* Neutral color */
-}
-
-h1 span {
-  display: block;
-  font-size: 0.8rem;
-  margin-bottom: 1rem;
-  margin-left: 3px;
-  margin-top: 0.2rem;
+  margin: 0;
+  color: white;
+  border-bottom: none;
 }
 
 /* Todo List - Flexible Scrolling */
 .todo-list {
-  overflow-y: auto;               /* Enable scrolling */
-  min-height: 50vh;               /* Adjust min-height for smaller screens */
-  max-height: 70vh;               /* Limit max height for better balance */
-  scrollbar-color: #ccc #f1f1f1;  
+  overflow-y: auto; /* Enable scrolling */
+  min-height: 50vh; /* Adjust min-height for smaller screens */
+  max-height: 70vh; /* Limit max height for better balance */
+  scrollbar-color: #ccc #f1f1f1;
   scrollbar-width: thin;
-  padding-right: 10px;            /* Space for scroll */
 }
 
 /* ✅ Bold and larger todo title */
 .todo .task-details > p {
-  font-size: 1rem;                     
-  font-weight: bold;                   
-  color: #333;                         
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
   margin-bottom: 5px;
+}
+
+body.dark-mode .todo .task-details > p {
+  color: #ffffff; /* White text for contrast */
 }
 
 /* Todo container adjustments */
@@ -63,20 +68,19 @@ h1 span {
   transition: all 0.3s;
   box-sizing: border-box;
   min-width: 100%;
-  gap: 12px;                      /* Consistent spacing */
-  padding-right: 20px;            /* Space for scroll gap */
+  gap: 12px; /* Consistent spacing */
+}
+
+body.dark-mode .todo {
+  background: #222222; /* Not too black */
+  color: #ffffff; /* White text for contrast */
+  border: 1px solid #444; /* Subtle border for definition */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  transition: all 0.3s; /* Smooth transition */
 }
 
 .todo:hover {
-  background: #e0e0e0;                  
-}
-
-/* Checkbox column: smaller and left-aligned */
-.checkbox-column {
-  flex: 0 0 12%;                 /* Reduce width for symmetry */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: #e0e0e0;
 }
 
 /* Task details: takes up remaining space */
@@ -91,25 +95,30 @@ h1 span {
 .todo-details-row {
   display: flex;
   align-items: center;
-  gap: 15px;              
-  margin-bottom: 5px;      /* Space between row and due date */
-  font-size: 0.9rem;       /* Uniform font size */
-  color: #555;            
-  flex-wrap: nowrap;      
+  gap: 15px;
+  margin-bottom: 5px; /* Space between row and due date */
+  font-size: 0.9rem; /* Uniform font size */
+  color: #555;
+  flex-wrap: nowrap;
 }
 
 .todo .priority-box,
 .todo .category {
-  font-size: 0.8rem;      /* Uniform size for all */
-  color: #555;            /* Medium gray text */
-  margin: 0;              
+  font-size: 0.8rem; /* Uniform size for all */
+  color: #555; /* Medium gray text */
+  margin: 0;
+}
+
+body.dark-mode .todo .priority-box,
+body.dark-mode .todo .category {
+  color: #ffffff; /* White text for contrast */
 }
 
 .todo .due-date {
-  font-size: 0.9rem !important;   /* Consistent size */
+  font-size: 0.9rem !important; /* Consistent size */
   font-weight: normal !important; /* Override bold */
-  color: #555;                     /* Same color as priority and category */
-  margin: 0;                       
+  color: #555; /* Same color as priority and category */
+  margin: 0;
 }
 
 .todo .priority-box {
@@ -121,28 +130,27 @@ h1 span {
 }
 
 .todo .priority-box.low {
-  background: #4caf50;    /* Green for Low priority */
+  background: #4caf50; /* Green for Low priority */
 }
 
 .todo .priority-box.medium {
-  background: #ffc107;    /* Yellow for Medium priority */
+  background: #ffc107; /* Yellow for Medium priority */
 }
 
 .todo .priority-box.high {
-  background: #f44336;    /* Red for High priority */
+  background: #f44336; /* Red for High priority */
 }
 
 .actions {
   display: flex;
-  gap: 8px;                     /* Space between buttons */
-  justify-content: flex-end;     /* Push buttons to the right */
+  gap: 8px; /* Space between buttons */
+  justify-content: flex-end; /* Push buttons to the right */
   align-items: center;
-  margin-right: 12px;            /* Space between buttons and scroll */
 }
 
 /* ✅ Add Todo button (green) */
 .add-btn {
-  background: #4caf50;                 
+  background: #4caf50;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -152,11 +160,13 @@ h1 span {
 }
 
 .add-btn:hover {
-  background: #45a049;                 
+  background: #45a049;
 }
 
 /* Individual button styling */
-.edit-btn, .delete-btn {
+.edit-btn,
+.delete-btn,
+.done-btn {
   padding: 0.5rem 0.8rem;
   border: none;
   border-radius: 5px;
@@ -167,7 +177,7 @@ h1 span {
 
 /* Edit button (blue) */
 .edit-btn {
-  background: lightblue;
+  background: turquoise;
   color: white;
 }
 
@@ -185,46 +195,71 @@ h1 span {
   background: #d32f2f;
 }
 
+.done-btn {
+  background: lightgreen;
+}
+
+.done-btn:hover {
+  background: #008015;
+}
+
 input,
 button {
   font: inherit;
 }
 
 input {
-  padding: 0.5rem;                /* Consistent padding */
-  font-size: 1rem;                /* Text size */
-  border: 1px solid #ccc;         /* Border styling */
-  border-radius: 5px;             /* Rounded corners */
-  transition: border 0.3s;        
-  width: 100%;                    /* Full width */
-  box-sizing: border-box;         /* Include padding in width */
-  height: auto;                    /* Flexible height */
-  min-height: 40px;               /* Ensure minimum touch-friendly height */
+  padding: 0.5rem; /* Consistent padding */
+  font-size: 1rem; /* Text size */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 5px; /* Rounded corners */
+  transition: border 0.3s;
+  width: 100%; /* Full width */
+  box-sizing: border-box; /* Include padding in width */
+  height: auto; /* Flexible height */
+  min-height: 40px; /* Ensure minimum touch-friendly height */
 }
 
 input:focus {
-  border-color: #4caf50;               
+  border-color: #4caf50;
   outline: none;
 }
 
 .todo-edit {
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.edit-title-row {
+  width: 100%;
+}
+
+.edit-title-input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+}
+
+.edit-fields-row {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
 }
 
 .completed {
   text-decoration: line-through;
-  color: #999;                         
+  color: #999;
 }
 
 /* ✅ Small checkbox style */
 .todo input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #4caf50;               
+  accent-color: #4caf50;
   cursor: pointer;
   margin-right: 8px;
   flex-shrink: 0;
@@ -233,97 +268,419 @@ input:focus {
 .priority-box {
   padding: 4px 10px;
   border-radius: 8px;
-  font-size: 0.9rem;           /* Uniform size */
+  font-size: 0.9rem; /* Uniform size */
   text-align: center;
   display: inline-block;
   min-width: 60px;
-  background: #e0e0e0;                 
-  color: #333;                          
+  background: #e0e0e0;
+  color: #333;
 }
 
+/* Main header */
 .header {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 100px;
-  background: #8AB2A6;
+  height: 70px; /* Increased height */
+  background: turquoise;
   color: white;
-  padding: 10px 20px;
+  padding: 0 20px;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Inner flex container: Handles item alignment */
 .headerBlock {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Distribute items evenly */
   align-items: center;
   height: 100%; /* Fills the parent (.header) */
 }
 
+/* App title and icon container - centered */
+.app-title {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the title */
+  flex: 1;
+}
+
+/* Icon container on the left */
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align to the left */
+  flex: 1;
+  padding-top: 25px;
+}
+
+/* App icon - larger size */
+.app-header {
+  object-fit: contain; /* Maintain aspect ratio */
+  vertical-align: middle; /* Better vertical alignment */
+  transition: all 0.2s ease; /* Smooth transition when size changes */
+}
+
+/* Menu container on the right */
+.dropdown {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+}
+
+/* Menu dropdown button - match this height with the icon */
+.dropdown-btn {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: white;
+  padding: 10px 16px; /* Slightly larger padding */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  height: 40px; /* Fixed height to match icon */
+  display: flex;
+  align-items: center;
+}
+
+/* Task Stats Styles */
+.task-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 15px 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .task-stats {
+  background: #2d2d2d;
+  color: #ffffff;
+}
+
+.stats-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #333;
+}
+
+body.dark-mode .stats-title {
+  color: #ffffff;
+}
+
+.stats-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.stat-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 4px;
+}
+
+body.dark-mode .stat-label {
+  color: #e0e0e0;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #212529;
+  background: #e9ecef;
+  padding: 4px 12px;
+  border-radius: 16px;
+  min-width: 40px;
+  text-align: center;
+}
+
+body.dark-mode .stat-value {
+  background: #444;
+  color: #ffffff;
+}
+
+.pie-chart-container {
+  height: 300px;
+  width: 100%;
+}
+
+.task-stats-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 15px 0;
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+}
+
+body.dark-mode .task-stats-empty {
+  background: #2d2d2d;
+  color: #adb5bd;
+}
+
+/* Controls bar - adjust position for taller header */
+.controls-bar {
+  position: fixed;
+  top: 70px; /* Position right below the taller header */
+  width: 100%;
+  height: 45px; /* Match mobile height */
+  background: #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 99;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .controls-bar {
+  background: #2d2d2d;
+  color: white;
+}
+
+.left-controls,
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Consistent gap for both mobile and desktop */
+  height: 100%;
+}
+
+/* Adjust list block to account for taller header */
 .listBlock {
-  margin-top: 120px;
+  margin-top: 130px; /* 70px header + 50px controls + 10px spacing */
   margin-bottom: 180px;
 }
 
-.createBlock,
-.todo-create {
+.create-container {
   position: fixed;
-  display: block;
   bottom: 0;
-  height: 150px;
-  justify-content: space-between;
-  align-items: center;
-  background: #8AB2A6;
   width: 100%;
-  border-top: 10px solid #6d9085; /* Add a border to the top */
+  background: #f5f5f5;
+  padding: 10px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 98;
 }
 
-.header h1 {
-  margin: 0;
+body.dark-mode .create-container {
+  background: #333; /* Dark background */
+  color: #ffffff; /* White text */
 }
 
-.logout-btn {
-  background: #f39e98;                  
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
+/* Language switcher styling - mobile style */
+.language-menu-container {
+  position: relative;
 }
 
-.logout-btn:hover {
-  background: #d32f2f;                  
-}
-
-.sort-dropdown {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
-.sort-dropdown label {
-  margin-right: 10px;
-  font-size: 1rem;
-  color: #333;                          
-}
-
-.sort-dropdown select {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
+.language-menu-button {
+  width: 36px;
+  height: 36px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  background: #ffffff;
   color: #333;
   cursor: pointer;
-  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.sort-dropdown select:hover {
-  background: #f1f1f1;
+body.dark-mode .language-menu-button {
+  background: #333;
+  border-color: #444;
+  color: white;
+}
+
+.language-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.language-option {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.language-option:hover {
+  background: #f0f0f0;
+}
+
+.language-option.active {
+  background: #e0f7fa;
+  font-weight: bold;
+}
+
+/* Dark mode toggle - mobile style */
+.mode-toggle {
+  width: 36px;
+  height: 36px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .mode-toggle {
+  background: #333;
+  border-color: #444;
+  color: white;
+}
+
+/* Sort controls */
+.left-controls label {
+  font-size: 0.9rem;
+  color: #555;
+  margin-right: 8px;
+}
+
+body.dark-mode .left-controls label {
+  color: #ddd;
+}
+
+.left-controls select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #333;
+  min-width: 120px;
+}
+
+body.dark-mode .left-controls select {
+  background: #444;
+  color: white;
+  border-color: #555;
+}
+
+/* Menu dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 101;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content button,
+.import-label {
+  color: #333;
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  display: block;
+}
+
+.dropdown-content button:hover,
+.import-label:hover {
+  background-color: #f3f4f6;
+}
+
+body.dark-mode .dropdown-content {
+  background-color: #333;
+}
+
+body.dark-mode .dropdown-content button,
+body.dark-mode .import-label {
+  color: #eee;
+}
+
+body.dark-mode .dropdown-content button:hover,
+body.dark-mode .import-label:hover {
+  background-color: #444;
+}
+
+.import-label {
+  cursor: pointer;
+}
+
+.toggle-form-btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toggle-form-btn:hover {
+  background: #5a7a70;
+}
+
+.todo-create {
+  background: #8ab2a6;
+  padding: 15px;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.todo-create input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 2px solid #6d9085;
+  border-radius: 5px;
+  font-size: 1rem;
 }
 
 /* ✅ Notification styling */
 .notification {
-  background: #4caf50;                  
+  background: #4caf50;
   color: white;
   padding: 10px;
   border-radius: 5px;
@@ -338,97 +695,156 @@ input:focus {
 /* ✅ Styling for the row layout */
 .todo-row {
   display: flex;
-  justify-content: space-between; /* Spread items evenly */
-  align-items: center; 
-  gap: 2vw;                      /* Even spacing */
-  margin-bottom: 1rem;
-  padding: 0 2vw;                /* Add padding for consistent margin on both sides */
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* ✅ Individual field styling */
 .todo-field {
-  display: flex;
-  flex-direction: column;         /* Label above input/select */
-  width: 22vw;                    /* Uniform width */
-  min-width: 180px;               /* Prevent shrinking on smaller screens */
+  flex: 1;
+  min-width: 120px;
 }
 
-/* ✅ Label styling */
 .todo-field label {
-  font-size: 0.9rem;
+  display: block;
   margin-bottom: 5px;
-  color: #555;                    /* Gray label color */
+  font-size: 0.9rem;
+  color: #2d4a43;
 }
 
-/* ✅ Select and date input styling */
+body.dark-mode .todo-field label {
+  color: #aad0c4;
+}
+
 .todo-field select,
-.todo-field input[type="date"],
-.todo-field button {
-  padding: 0.5rem;                /* Consistent padding */
-  font-size: 1rem;                /* Uniform text size */
-  border: 1px solid #ccc;         /* Border styling */
-  border-radius: 5px;             /* Rounded corners */
-  transition: border 0.3s;        
-  width: 100%;                    /* Full width */
-  box-sizing: border-box;         /* Include padding in width */
-  height: 45px;                    /* Uniform height */
+.todo-field input[type="datetime-local"] {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #6d9085;
+  border-radius: 5px;
+  background: white;
 }
 
-/* ✅ Button styling */
-.todo-field button {
-  background: #4caf50;            /* Green button */
+.submit-btn {
+  padding: 8px 15px;
+  background: #2d4a43;
   color: white;
-  cursor: pointer;
-  transition: background 0.3s;
   border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.todo-field button:hover {
-  background: #45a049;            /* Darker green on hover */
+.cancel-btn {
+  padding: 8px 10px;
+  margin-left: 5px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.todo-field button:disabled {
-  background: #ccc;               /* Disabled button */
-  cursor: not-allowed;
+/* Ensure buttons don't have browser default styling */
+button {
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-/* ✅ Add smooth hover effect */
-.todo-field select:hover,
-.todo-field input[type="date"]:hover {
-  border-color: #4caf50;
-}
-
-/* ✅ Add focus outline */
-.todo-field select:focus,
-.todo-field input[type="date"]:focus {
-  outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-}
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .createBlock,
+  .header {
+    height: 60px; /* Still taller than before but slightly reduced for mobile */
+  }
+
+  .app-title {
+    margin-right: 25px;
+  }
+
+  .controls-bar {
+    top: 60px;
+  }
+
+  .dropdown-btn {
+    padding: 7px 7px; /* Slightly larger padding */
+  }
+
+  .listBlock {
+    margin-top: 110px; /* 60px header + 40px controls + 10px spacing */
+  }
+
+  /* Make sure the right controls are properly aligned */
+  .right-controls {
+    justify-content: flex-end;
+  }
+
+  /* Additional fixes for the controls */
+  .right-controls button,
+  .language-menu-button {
+    min-width: 36px;
+    min-height: 36px;
+    max-width: 36px;
+    max-height: 36px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .language-menu-button,
+  .mode-toggle {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+
+  .left-controls label {
+    font-size: 0.8rem;
+  }
+
+  .left-controls select {
+    padding: 6px;
+    font-size: 0.8rem;
+    min-width: 100px;
+  }
+
   .todo-create {
-    position: fixed;
     display: block;
     bottom: 0;
-    height: auto;                    /* Flexible height */
-    min-height: 150px;               /* Maintain minimum height */
+    height: auto; /* Flexible height */
+    min-height: 150px; /* Maintain minimum height */
     justify-content: space-between;
     align-items: center;
-    background: #8AB2A6;
-    width: 100%;                     /* Full width, no side margin */
-    margin: 0;                       /* Remove all margins */
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for better separation */
-    border-radius: 10px 10px 0 0;    /* Rounded corners on top */
+    background: #8ab2a6;
+    width: 100%; /* Full width, no side margin */
+    margin: 0; /* Remove all margins */
   }
 
   .todo-row {
-    flex-direction: column;          /* Stack fields vertically on mobile */
-    gap: 15px;                       /* Spacing between fields */
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
   .todo-field {
-    width: 100%;                     /* Full width fields on mobile */
+    min-width: 100%; /* Full width fields on mobile */
+  }
+
+  .todo-field:last-child {
+    display: flex;
+    gap: 10px;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    flex: 1;
+  }
+
+  .edit-fields-row {
+    flex-wrap: wrap;
+  }
+
+  .edit-fields-row select,
+  .edit-fields-row input[type="date"],
+  .edit-fields-row input[type="time"] {
+    flex: 1 1 120px;
+    min-width: 0;
   }
 }

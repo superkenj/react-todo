@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CheckIcon from "../check.svg";
+import CheckIcon from "../g_check.svg";
 
 const TodoEdit = ({ todo, onSubmit }) => {
   const [title, setTitle] = useState(todo.title);
@@ -39,25 +39,37 @@ const TodoEdit = ({ todo, onSubmit }) => {
 
   return (
     <form className="todo-edit" onSubmit={handleSubmit}>
-      <input type="text" value={title} onChange={handleChangeTitle} />
-      <select value={category} onChange={handleChangeCategory}>
-        <option value="Chores">Chores</option>
-        <option value="Work">Work</option>
-        <option value="Personal">Personal</option>
-      </select>
-      <select value={priority} onChange={handleChangePriority}>
-        <option value="Low">Low</option>
-        <option value="Medium">Medium</option>
-        <option value="High">High</option>
-      </select>
-      
-      {/* ⭐️ Added time input */}
-      <input type="date" value={dueDate} onChange={handleChangeDueDate} />
-      <input type="time" value={dueTime} onChange={handleChangeDueTime} />
+      {/* Row 1: Title Only (Full Width) */}
+      <div className="edit-title-row">
+        <input 
+          type="text" 
+          value={title} 
+          onChange={handleChangeTitle}
+          className="edit-title-input"
+        />
+      </div>
 
-      <button type="submit">
-        <img src={CheckIcon} alt="Save todo" title="Save" />
-      </button>
+      {/* Row 2: All Other Fields */}
+      <div className="edit-fields-row">
+        <select value={category} onChange={handleChangeCategory}>
+          <option value="Chores">Chores</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+        </select>
+
+        <select value={priority} onChange={handleChangePriority}>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+
+        <input type="date" value={dueDate} onChange={handleChangeDueDate} />
+        <input type="time" value={dueTime} onChange={handleChangeDueTime} />
+
+        <button type="submit" className="edit-submit-btn">
+          <img src={CheckIcon} alt="Save todo" title="Save" />
+        </button>
+      </div>
     </form>
   );
 };

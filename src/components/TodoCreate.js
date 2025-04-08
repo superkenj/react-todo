@@ -1,76 +1,97 @@
-import { useState } from "react";
+"use client"
+
+import { useState } from "react"
+import { useLanguage } from "../context/LanguageContext"
 
 const TodoCreate = ({ createTodo }) => {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Personal");
-  const [priority, setPriority] = useState("Medium");
-  const [dueDate, setDueDate] = useState("");
+  const [isFormVisible, setIsFormVisible] = useState(false)
+  const [title, setTitle] = useState("")
+  const [category, setCategory] = useState("Personal")
+  const [priority, setPriority] = useState("Medium")
+  const [dueDate, setDueDate] = useState("")
+  const { t, language, translations } = useLanguage()
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!title.trim() || !dueDate) return;
-
-    createTodo(title, category, priority, dueDate);
+    e.preventDefault()
+    createTodo(title, category, priority, dueDate)
 
     // Reset form fields
-    setTitle("");
-    setCategory("Personal");
-    setPriority("Medium");
-    setDueDate("");
-  };
+    setTitle("")
+    setCategory("Personal")
+    setPriority("Medium")
+    setDueDate("")
+    setIsFormVisible(false)
+  }
 
-  const isDisabled = !title.trim() || !dueDate;
+  // Get the current language's translations
+  const currentTranslations = translations[language]
 
   return (
-    <form onSubmit={handleSubmit} className="todo-create">
-      <input
-        type="text"
-        name="title"
-        id="title"
-        placeholder="Enter a todo"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
+    <div className="create-container">
+      {/* Toggle Button */}
+      <button className="toggle-form-btn" onClick={() => setIsFormVisible(!isFormVisible)}>
+        {t("addNewTodo")}
+      </button>
 
-      {/* ✅ Display Category, Priority, Due Date, and Button in a single row */}
-      <div className="todo-row">
-        <div className="todo-field">
-          <label>Category</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="Chores">Chores</option>
-            <option value="Work">Work</option>
-            <option value="Personal">Personal</option>
-          </select>
-        </div>
-
-        <div className="todo-field">
-          <label>Priority</label>
-          <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-        </div>
-
-        <div className="todo-field">
-          <label>Due Date</label>
+      {/* Form (conditionally visible) */}
+      {isFormVisible && (
+        <form onSubmit={handleSubmit} className="todo-create">
           <input
-            type="datetime-local"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
+            type="text"
+            name="title"
+            id="title"
+            placeholder={t("addTodo")}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             required
+            autoFocus
           />
-        </div>
 
-        <div className="todo-field">
-          <button type="submit" disabled={isDisabled}>
-            Add Todo
-          </button>
-        </div>
-      </div>
-    </form>
-  );
-};
+          <div className="todo-row">
+            <div className="todo-field">
+              <label>{t("category")}</label>
+              <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                {Object.keys(currentTranslations)
+                  .filter((key) => ["Chores", "Work", "Personal"].includes(key))
+                  .map((key) => (
+                    <option key={key} value={key}>
+                      {currentTranslations[key]}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-export default TodoCreate;
+            <div className="todo-field">
+              <label>{t("priority")}</label>
+              <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+                {Object.keys(currentTranslations)
+                  .filter((key) => ["Low", "Medium", "High"].includes(key))
+                  .map((key) => (
+                    <option key={key} value={key}>
+                      {currentTranslations[key]}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="todo-field">
+              <label>{t("dueDate")}</label>
+              <input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
+            </div>
+
+            <div className="todo-field">
+              <button type="submit" className="submit-btn">
+                {t("submit")}
+              </button>
+              <button type="button" className="cancel-btn" onClick={() => setIsFormVisible(false)}>
+                {t("cancel")}
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+    </div>
+  )
+}
+
+export default TodoCreate

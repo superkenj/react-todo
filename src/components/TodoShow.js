@@ -2,6 +2,7 @@ import TodoEdit from "./TodoEdit";
 import { useState } from "react";
 import EditIcon from "../edit.svg";
 import DeleteIcon from "../delete.svg";
+import DoneIcon from "../g_check.svg";
 
 const TodoShow = ({ todo, removeTodo, changeTodo }) => {
   const [showEdit, setShowEdit] = useState(false);
@@ -71,15 +72,6 @@ const TodoShow = ({ todo, removeTodo, changeTodo }) => {
 
   return (
     <li className="todo">
-      <div className="checkbox-column">
-        <input
-          type="checkbox"
-          checked={todo.completed}
-          onChange={handleToggleComplete}
-          disabled={todo.completed}
-          style={{ marginRight: "10px" }}
-        />
-      </div>
 
       <div className="task-details">
         <p className={todo.completed ? "completed" : ""}>{todo.title}</p>
@@ -95,15 +87,16 @@ const TodoShow = ({ todo, removeTodo, changeTodo }) => {
       </div>
 
       <div className="actions">
+
         <button
-          className="delete-btn"
-          onClick={handleDelete}
+          className="done-btn"
+          onClick={handleToggleComplete}
           disabled={todo.completed}
         >
           <img
-            src={DeleteIcon}
-            alt="Delete todo"
-            title="Delete"
+            src={DoneIcon}
+            alt="Done todo"
+            title="Done"
             style={{ opacity: todo.completed ? 0.5 : 1 }}
           />
         </button>
@@ -120,6 +113,20 @@ const TodoShow = ({ todo, removeTodo, changeTodo }) => {
             style={{ opacity: todo.completed ? 0.5 : 1 }}
           />
         </button>
+
+        <button
+          className="delete-btn"
+          onClick={handleDelete}
+          disabled={todo.completed}
+        >
+          <img
+            src={DeleteIcon}
+            alt="Delete todo"
+            title="Delete"
+            style={{ opacity: todo.completed ? 0.5 : 1 }}
+          />
+        </button>
+        
       </div>
     </li>
   );
