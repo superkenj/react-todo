@@ -6,13 +6,31 @@ import EditIcon from "../edit.svg"
 import DeleteIcon from "../delete.svg"
 import DoneIcon from "../g_check.svg"
 import ArchiveIcon from "../archive.svg"
-// Remove the lucide-react import
+import PlayIcon from "../play.svg"
+import PauseIcon from "../pause.svg"
 
-const TodoShow = ({ todo, removeTodo, changeTodo, archiveTodo, isSelected, onSelectTodo }) => {
+const TodoShow = ({
+  todo,
+  removeTodo,
+  changeTodo,
+  archiveTodo,
+  isSelected,
+  onSelectTodo,
+  draggable,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDragEnter,
+  onDragLeave,
+  onDrop,
+  isDraggedOver,
+  isDragging,
+}) => {
   const [showEdit, setShowEdit] = useState(false)
   const [isTimerRunning, setIsTimerRunning] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(todo.elapsedTime || 0)
   const timerRef = useRef(null)
+  const todoRef = useRef(null)
 
   // Format time as HH:MM:SS
   const formatTime = (timeInSeconds) => {
@@ -143,10 +161,52 @@ const TodoShow = ({ todo, removeTodo, changeTodo, archiveTodo, isSelected, onSel
     )
   }
 
+  // Determine the CSS classes for drag and drop
+  const todoClasses = `todo ${isDraggedOver ? "drag-over" : ""} ${isDragging ? "dragging" : ""}`
+
+  // Custom drag start handler to fix desktop issues
+  const handleDragStart = (e) => {
+    if (onDragStart) {
+      // Set the drag image to the todo element
+      if (todoRef.current) {
+        const rect = todoRef.current.getBoundingClientRect()
+        e.dataTransfer.setDragImage(todoRef.current, rect.width / 2, rect.height / 2)
+      }
+      onDragStart(e)
+    }
+  }
+
+  // Only make non-completed todos draggable
+  const isDraggable = draggable && !todo.completed
+
   return (
-    <li className="todo">
-      <div className="todo-select-checkbox">
-        <input type="checkbox" checked={isSelected} onChange={handleSelect} aria-label={`Select ${todo.title}`} />
+    <li
+      ref={todoRef}
+      className={todoClasses}
+      draggable={isDraggable}
+      onDragStart={isDraggable ? handleDragStart : null}
+      onDragEnd={isDraggable ? onDragEnd : null}
+      onDragOver={onDragOver}
+      onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+    >
+      <div className="todo-left-controls">
+        <div className="todo-select-checkbox">
+          {!todo.completed ? (
+            <input type="checkbox" checked={isSelected} onChange={handleSelect} aria-label={`Select ${todo.title}`} />
+          ) : (
+            <div className="checkbox-placeholder" style={{ width: "16px", height: "16px" }}></div>
+          )}
+        </div>
+
+        <div
+          className="drag-handle"
+          title={isDraggable ? "Drag to reorder" : ""}
+          style={{ visibility: isDraggable ? "visible" : "hidden" }}
+        >
+          ⋮⋮⋮
+        </div>
       </div>
 
       <div className="task-details">
@@ -161,7 +221,7 @@ const TodoShow = ({ todo, removeTodo, changeTodo, archiveTodo, isSelected, onSel
         </div>
 
         <div className="actions-row">
-        <button
+          <button
             className="timer-btn"
             onClick={toggleTimer}
             disabled={todo.completed}
@@ -171,7 +231,21 @@ const TodoShow = ({ todo, removeTodo, changeTodo, archiveTodo, isSelected, onSel
             }}
             title={isTimerRunning ? "Pause timer" : "Start timer"}
           >
-            {isTimerRunning ? " ⏸︎ " : " ▶ "}
+            {isTimerRunning ? (
+              <img
+                src={PauseIcon || "/placeholder.svg"}
+                alt="Pause"
+                title="Pause"
+                style={{ opacity: todo.completed ? 0.5 : 1 }}
+              />
+            ) : (
+              <img
+                src={PlayIcon || "/placeholder.svg"}
+                alt="Play"
+                title="Play"
+                style={{ opacity: todo.completed ? 0.5 : 1 }}
+              />
+            )}
           </button>
           <span className="timer-display">{formatTime(elapsedTime)}</span>
           <button className="edit-btn" onClick={handleEdit} disabled={todo.completed}>

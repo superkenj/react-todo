@@ -157,8 +157,21 @@ const App = () => {
 
   // ✅ Handle login/logout
   const handleLogin = () => {
+    // Generate a unique user ID if one doesn't exist yet
+    const userId = localStorage.getItem("userId") || `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
+    // Store the user ID persistently (so it remains the same across sessions)
+    localStorage.setItem("userId", userId)
+
+    // Store the full user object in session storage (for the current session)
+    const userObj = {
+      id: userId,
+      authenticated: true,
+      loginTime: new Date().toISOString(),
+    }
+
+    sessionStorage.setItem("user", JSON.stringify(userObj))
     setIsAuthenticated(true)
-    sessionStorage.setItem("user", JSON.stringify({ authenticated: true }))
   }
 
   const handleLogout = () => {
@@ -277,9 +290,24 @@ const App = () => {
     setSelectedTodos([])
   }
 
+  // Modify the exportTodos function to include user information
   const exportTodos = () => {
     if (todos.length === 0) {
       alert("No todos to export!")
+      return
+    }
+
+    // Get current user from sessionStorage
+    const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}")
+
+    // Get the persistent userId from localStorage as a fallback
+    const persistentUserId = localStorage.getItem("userId")
+
+    // Ensure we have a user ID one way or another
+    const userId = currentUser.id || persistentUserId
+
+    if (!userId) {
+      alert("User identification error. Please log out and log in again.")
       return
     }
 
@@ -288,6 +316,10 @@ const App = () => {
       exportedAt: new Date().toISOString(),
       todos: todos,
       archivedTodos: archivedTodos,
+      user: {
+        id: userId,
+        exportTime: new Date().toISOString(),
+      },
     }
 
     const dataStr = JSON.stringify(data, null, 2)
@@ -301,12 +333,33 @@ const App = () => {
     URL.revokeObjectURL(url)
   }
 
+  // Modify the importTodos function to check user identity
   const importTodos = (file) => {
     const reader = new FileReader()
     reader.onload = (e) => {
       try {
         const result = JSON.parse(e.target.result)
+
+        // Check if the file has todos
         if (Array.isArray(result?.todos)) {
+          // Get current user from sessionStorage
+          const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}")
+
+          // Get the persistent userId from localStorage as a fallback
+          const persistentUserId = localStorage.getItem("userId")
+
+          // Check if the file has user information
+          if (result.user && result.user.id) {
+            // First check if the IDs match directly
+            const currentUserId = currentUser.id || persistentUserId
+
+            if (result.user.id !== currentUserId) {
+              alert("This todo list belongs to another user and cannot be imported")
+              return
+            }
+          }
+
+          // If user check passes or no user in file (backward compatibility), proceed with import
           setTodos(result.todos)
           if (Array.isArray(result?.archivedTodos)) {
             setArchivedTodos(result.archivedTodos)
@@ -327,6 +380,25 @@ const App = () => {
       importTodos(e.target.files[0])
       e.target.value = null // Reset file input
     }
+  }
+
+  // Add this function to your App component
+  const reorderTodos = (draggedId, targetId) => {
+    // Find the indices of the dragged and target todos
+    const draggedIndex = todos.findIndex((todo) => todo.id === draggedId)
+    const targetIndex = todos.findIndex((todo) => todo.id === targetId)
+
+    if (draggedIndex === -1 || targetIndex === -1) {
+      return
+    }
+
+    // Create a new array with the todos in the new order
+    const newTodos = [...todos]
+    const [draggedTodo] = newTodos.splice(draggedIndex, 1)
+    newTodos.splice(targetIndex, 0, draggedTodo)
+
+    // Update the todos state
+    setTodos(newTodos)
   }
 
   return (
@@ -419,7 +491,7 @@ const App = () => {
                           onChange={selectAllTodos}
                           title={t("select_all")}
                         />
-                        <label htmlFor="select-all" ></label>
+                        <label htmlFor="select-all"></label>
                       </div>
                       <div className="selection-actions">
                         <button
@@ -473,6 +545,7 @@ const App = () => {
                         sortBy={sortBy}
                         selectedTodos={selectedTodos}
                         onSelectTodo={handleSelectTodo}
+                        reorderTodos={reorderTodos}
                       />
                       <TodoCreate createTodo={createTodo} />
                     </div>
