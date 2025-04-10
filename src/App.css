@@ -61,14 +61,13 @@ body.dark-mode .todo .task-details > p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1rem 0;
-  padding: 1rem;
+  padding: 1.25rem;
   background: #f5f5f5;
-  border-radius: 5px;
+  border-radius: 8px;
   transition: all 0.3s;
   box-sizing: border-box;
-  min-width: 100%;
-  gap: 12px; /* Consistent spacing */
+  width: 100%;
+  gap: 12px;
 }
 
 body.dark-mode .todo {
@@ -95,36 +94,29 @@ body.dark-mode .todo {
 .todo-details-row {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 5px; /* Space between row and due date */
-  font-size: 0.9rem; /* Uniform font size */
-  color: #555;
+  gap: 10px;
+  margin-bottom: 8px;
   flex-wrap: nowrap;
 }
 
 .todo .priority-box,
-.todo .category {
+.todo .category,
+.todo .due-date {
   font-size: 0.8rem; /* Uniform size for all */
+  font-weight: 500; /* Medium weight */
   color: #555; /* Medium gray text */
-  margin: 0;
 }
 
 body.dark-mode .todo .priority-box,
-body.dark-mode .todo .category {
+body.dark-mode .todo .category,
+body.dark-mode .todo .due-date {
   color: #ffffff; /* White text for contrast */
-}
-
-.todo .due-date {
-  font-size: 0.9rem !important; /* Consistent size */
-  font-weight: normal !important; /* Override bold */
-  color: #555; /* Same color as priority and category */
-  margin: 0;
 }
 
 .todo .priority-box {
   padding: 4px 8px;
   border-radius: 4px;
-  min-width: 80px;
+  min-width: 70px;
   text-align: center;
   color: white;
 }
@@ -141,11 +133,97 @@ body.dark-mode .todo .category {
   background: #f44336; /* Red for High priority */
 }
 
+.todo .category,
+.todo .due-date {
+  background: #E0E0E0;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+body.dark-mode .todo .category,
+body.dark-mode .todo .due-date {
+  background: #333333; /* Darker background for contrast */
+  color: #ffffff; /* White text for contrast */
+}
+
 .actions {
   display: flex;
   gap: 8px; /* Space between buttons */
   justify-content: flex-end; /* Push buttons to the right */
   align-items: center;
+}
+
+/* Actions grid layout */
+.actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Make buttons square and consistent size */
+.edit-btn,
+.delete-btn,
+.done-btn,
+.archive-btn,
+.timer-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-btn img,
+.delete-btn img,
+.done-btn img,
+.archive-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+.timer-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.timer-btn:hover {
+  background-color: #45a049;
+}
+
+.timer-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timer-display {
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: monospace;
+  color: #333;
+}
+
+body.dark-mode .timer-display {
+  background-color: #333;
+  color: #fff;
+}
+
+
+/* Ensure the grid stays aligned even when archive button is not present */
+.actions-row:last-child {
+  min-height: 36px;
 }
 
 /* ✅ Add Todo button (green) */
@@ -166,7 +244,8 @@ body.dark-mode .todo .category {
 /* Individual button styling */
 .edit-btn,
 .delete-btn,
-.done-btn {
+.done-btn,
+.archive-btn {
   padding: 0.5rem 0.8rem;
   border: none;
   border-radius: 5px;
@@ -201,6 +280,43 @@ body.dark-mode .todo .category {
 
 .done-btn:hover {
   background: #008015;
+}
+
+/* Archive button */
+.archive-btn {
+  background: #808080;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 0.7rem;
+}
+
+.archive-btn:hover {
+  background: #D3D3D3;
+}
+
+.archive-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+/* Restore button */
+.restore-btn {
+  background: #3498db;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 0.7rem;
+}
+
+.restore-btn:hover {
+  background: #2980b9;
 }
 
 input,
@@ -266,9 +382,9 @@ input:focus {
 }
 
 .priority-box {
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.9rem; /* Uniform size */
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem; /* Uniform size */
   text-align: center;
   display: inline-block;
   min-width: 60px;
@@ -462,9 +578,100 @@ body.dark-mode .controls-bar {
   height: 100%;
 }
 
-/* Adjust list block to account for taller header */
+/* Selection Controls Bar */
+.selection-controls-bar {
+  position: fixed;
+  top: 115px; /* Position below the controls bar */
+  width: 100%;
+  height: 45px;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 98;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .selection-controls-bar {
+  background: #333;
+  color: white;
+}
+
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.select-all input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #4caf50;
+}
+
+.selection-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.action-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.done-action {
+  background-color: lightgreen;
+}
+
+.done-action:hover {
+  background-color: #45a049;
+}
+
+.delete-action {
+  background-color: lightcoral;
+}
+
+.delete-action:hover {
+  background-color: #d32f2f;
+}
+
+.archive-action {
+  background-color: #808080;
+}
+
+.archive-action:hover {
+  background-color: #D3D3D3;
+}
+
+.action-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.action-btn img {
+  opacity: 0.5;
+}
+
+/* Container width adjustments for desktop */
 .listBlock {
-  margin-top: 130px; /* 70px header + 50px controls + 10px spacing */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 175px;
   margin-bottom: 180px;
 }
 
@@ -749,34 +956,260 @@ button {
   -webkit-appearance: none;
 }
 
+/* Archived todos */
+.archived-todos {
+  padding: 10px;
+}
+
+.archived-title {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+}
+
+body.dark-mode .archived-title {
+  color: #fff;
+}
+
+.archived-todo {
+  opacity: 0.8;
+  border-left: 4px solid #8e44ad;
+}
+
+.no-archived,
+.no-todos {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+  font-style: italic;
+}
+
+body.dark-mode .no-archived,
+body.dark-mode .no-todos {
+  color: #aaa;
+}
+
+/* Bulk actions */
+.bulk-actions-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #f0f0f0;
+  padding: 10px 15px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 97;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+body.dark-mode .bulk-actions-bar {
+  background: #2d2d2d;
+  color: white;
+}
+
+.bulk-toggle-btn {
+  padding: 8px 15px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.bulk-toggle-btn:hover {
+  background: #2980b9;
+}
+
+.bulk-toggle-btn.active {
+  background: #e74c3c;
+}
+
+.bulk-toggle-btn.active:hover {
+  background: #c0392b;
+}
+
+.bulk-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.select-all input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db;
+}
+
+.bulk-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.bulk-complete-btn,
+.bulk-delete-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.bulk-complete-btn {
+  background: #2ecc71;
+  color: white;
+}
+
+.bulk-complete-btn:hover {
+  background: #27ae60;
+}
+
+.bulk-delete-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.bulk-delete-btn:hover {
+  background: #c0392b;
+}
+
+.bulk-complete-btn:disabled,
+.bulk-delete-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+.bulk-buttons img {
+  width: 16px;
+  height: 16px;
+  filter: invert(1);
+}
+
+.bulk-select-checkbox {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.bulk-select-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  /* Reset container widths for mobile */
+  .listBlock,
+  .controls-bar,
+  .selection-controls-bar,
+  .create-container {
+    max-width: none;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    left: auto;
+    right: auto;
+  }
+
+  /* Reset list block margins */
+  .listBlock {
+    margin-top: 155px;
+    margin-bottom: 180px;
+  }
+
+  /* Reset todo item styling */
+  .todo {
+    max-width: none;
+    width: 100%;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: none;
+    gap: 7px;
+  }
+
+  /* Reset todo details row */
+  .todo-details-row {
+    gap: 5px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Reset priority box */
+  .todo .priority-box {
+    padding: 4px 8px;
+    min-width: 60px;
+    font-weight: 500;
+  }
+
+  /* Reset category and due date */
+  .todo .category,
+  .todo .due-date {
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-weight: normal;
+  }
+
+  /* Reset actions row */
+  .actions-row {
+    gap: 8px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  }
+
+  /* Reset action buttons size */
+  .edit-btn,
+  .delete-btn,
+  .done-btn,
+  .archive-btn,
+  .timer-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Reset timer display */
+  .timer-display {
+    padding: 3px 6px;
+    font-size: 0.75rem;
+    font-weight: normal;
+    border-radius: 4px;
+  }
+
+  /* Header adjustments */
   .header {
-    height: 60px; /* Still taller than before but slightly reduced for mobile */
+    height: 60px;
   }
 
   .app-title {
     margin-right: 25px;
   }
 
+  .dropdown-btn {
+    padding: 7px 7px;
+  }
+
+  /* Controls positioning */
   .controls-bar {
     top: 60px;
   }
 
-  .dropdown-btn {
-    padding: 7px 7px; /* Slightly larger padding */
+  .selection-controls-bar {
+    top: 102px;
   }
 
-  .listBlock {
-    margin-top: 110px; /* 60px header + 40px controls + 10px spacing */
-  }
-
-  /* Make sure the right controls are properly aligned */
-  .right-controls {
-    justify-content: flex-end;
-  }
-
-  /* Additional fixes for the controls */
+  /* Control buttons sizing */
   .right-controls button,
   .language-menu-button {
     min-width: 36px;
@@ -795,6 +1228,7 @@ button {
     font-size: 0.8rem;
   }
 
+  /* Sort controls sizing */
   .left-controls label {
     font-size: 0.8rem;
   }
@@ -805,16 +1239,18 @@ button {
     min-width: 100px;
   }
 
+  /* Todo create form layout */
   .todo-create {
     display: block;
     bottom: 0;
-    height: auto; /* Flexible height */
-    min-height: 150px; /* Maintain minimum height */
+    height: auto;
+    min-height: 150px;
     justify-content: space-between;
     align-items: center;
     background: #8ab2a6;
-    width: 100%; /* Full width, no side margin */
-    margin: 0; /* Remove all margins */
+    width: 100%;
+    margin: 0;
+    border-radius: 10px 10px 0 0;
   }
 
   .todo-row {
@@ -824,7 +1260,7 @@ button {
   }
 
   .todo-field {
-    min-width: 100%; /* Full width fields on mobile */
+    min-width: 100%;
   }
 
   .todo-field:last-child {
@@ -837,6 +1273,7 @@ button {
     flex: 1;
   }
 
+  /* Edit form layout */
   .edit-fields-row {
     flex-wrap: wrap;
   }
@@ -846,5 +1283,21 @@ button {
   .edit-fields-row input[type="time"] {
     flex: 1 1 120px;
     min-width: 0;
+  }
+
+  /* Bulk actions layout */
+  .bulk-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bulk-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .bulk-complete-btn,
+  .bulk-delete-btn {
+    flex: 1;
   }
 }

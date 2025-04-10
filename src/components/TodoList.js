@@ -1,6 +1,8 @@
 import TodoShow from "./TodoShow"
+import { useLanguage } from "../context/LanguageContext"
 
-const TodoList = ({ todos, removeTodo, changeTodo, sortBy }) => {
+const TodoList = ({ todos, removeTodo, changeTodo, archiveTodo, sortBy, selectedTodos, onSelectTodo }) => {
+  const { t } = useLanguage() // We'll use 't' for translations when needed
   const sortTodos = (todos, sortBy) => {
     const priorityOrder = { High: 1, Medium: 2, Low: 3 }
 
@@ -43,12 +45,24 @@ const TodoList = ({ todos, removeTodo, changeTodo, sortBy }) => {
   const sortedTodos = sortTodos(todos, sortBy)
 
   const renderedTodos = sortedTodos.map((todo) => (
-    <TodoShow key={todo.id} todo={todo} removeTodo={removeTodo} changeTodo={changeTodo} />
+    <TodoShow
+      key={todo.id}
+      todo={todo}
+      removeTodo={removeTodo}
+      changeTodo={changeTodo}
+      archiveTodo={archiveTodo}
+      isSelected={selectedTodos.includes(todo.id)}
+      onSelectTodo={onSelectTodo}
+    />
   ))
 
   return (
     <div>
-      <ul className="todo-list">{renderedTodos}</ul>
+      {todos.length === 0 ? (
+        <div className="no-todos">{t("no_tasks")}</div>
+      ) : (
+        <ul className="todo-list">{renderedTodos}</ul>
+      )}
     </div>
   )
 }

@@ -29,12 +29,15 @@ export const LanguageProvider = ({ children }) => {
       cancel: "Cancel",
       language: "EN",
       menu: "Menu",
+      show_active: "Active",
+      show_archived: "Archived",
       import: "Import",
       export: "Export",
       logout: "Logout",
       sortBy: "Sort:",
       title: "Title",
       completed: "Completed",
+      no_tasks: "No tasks available. Add some tasks to get started.",
       // Categories
       Chores: "Chores",
       Work: "Work",
@@ -46,6 +49,8 @@ export const LanguageProvider = ({ children }) => {
       //Task Stats
       show_stats: "Show Stats",
       hide_stats: "Hide Stats",
+      //Bulk Buttons
+      select_all: "Select All",
     },
     fi: {
       ticktrackTitle: "TikTak",
@@ -62,12 +67,15 @@ export const LanguageProvider = ({ children }) => {
       cancel: "Kanselahin",
       language: "FI",
       menu: "Menu",
+      show_active: "Aktibo",
+      show_archived: "Naka-archive",
       import: "Mag-import",
       export: "Mag-export",
       logout: "Mag-logout",
       sortBy: "Uriin:",
       title: "Pamagat",
       completed: "Nakumpleto",
+      no_tasks: "Walang nakalistang mga gawain. Magdagdag ng ilang gawain upang makapagsimula.",
       // Categories
       Chores: "Gawaing Bahay",
       Work: "Trabaho",
@@ -79,6 +87,8 @@ export const LanguageProvider = ({ children }) => {
       //Task Stats
       show_stats: "Ipakita ang Stats",
       hide_stats: "Itago ang Stats", 
+      //Bulk Buttons
+      select_all: "Piliin Lahat",
     },
   }
 
