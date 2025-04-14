@@ -22,6 +22,16 @@ const Login = ({ onLogin }) => {
       );
 
       if (user) {
+        // Store user in session storage with ID for binding
+        sessionStorage.setItem("user", JSON.stringify({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          username: user.name, // Add username for display in welcome message
+          authenticated: true,
+          loginTime: new Date().toISOString()
+        }));
+        
         onLogin(user);
         navigate("/");
       } else {

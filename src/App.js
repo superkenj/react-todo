@@ -10,12 +10,49 @@ import TodoList from "./components/TodoList"
 import TodoCreate from "./components/TodoCreate"
 import TaskStats from "./components/TaskStats"
 import ArchivedTodos from "./components/ArchivedTodos"
+import AppNotification from "./components/Notification" // Updated import name
 import "./App.css"
 import Light from "./light.svg"
 import Dark from "./dark.svg"
 import DeleteIcon from "./delete.svg"
 import DoneIcon from "./g_check.svg"
 import ArchiveIcon from "./archive.svg"
+
+// Date utility functions
+const formatDateTime = (dateString) => {
+  if (!dateString) return "No due date";
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid date";
+    
+    // Use built-in formatting for consistency
+    const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+    
+    return `${date.toLocaleDateString(undefined, dateOptions)} ${date.toLocaleTimeString(undefined, timeOptions)}`;
+  } catch (e) {
+    console.error("Error formatting date:", e);
+    return "Invalid date";
+  }
+};
+
+const isDueSoon = (dateString) => {
+  if (!dateString) return false;
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return false;
+    
+    const now = new Date();
+    const timeDiff = date.getTime() - now.getTime();
+    const fiveMinutesInMs = 5 * 60 * 1000;
+    
+    return timeDiff > 0 && timeDiff <= fiveMinutesInMs;
+  } catch (e) {
+    return false;
+  }
+};
 
 const App = () => {
   const [todos, setTodos] = useState([]) // State to store todo items
@@ -28,6 +65,8 @@ const App = () => {
   const isFirstRender = useRef(true) // Ref to prevent saving todos on initial render
   const { t } = useLanguage() // We'll use 't' for translations when needed
   const [showStats, setShowStats] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null) // State to track current user
+  const [notification, setNotification] = useState(null) // State for in-app notifications
 
   // ✅ Load todos, archived todos and user authentication from localStorage and sessionStorage on initial render
   useEffect(() => {
@@ -35,6 +74,16 @@ const App = () => {
     const storedArchivedTodos = localStorage.getItem("archivedTodos") // Retrieve archived todos
     const storedUser = sessionStorage.getItem("user") // Retrieve user authentication from sessionStorage
     const storedDarkMode = localStorage.getItem("darkMode") === "true"
+
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser)
+        setCurrentUser(parsedUser)
+        setIsAuthenticated(true)
+      } catch (error) {
+        console.error("Error parsing user data:", error)
+      }
+    }
 
     if (storedTodos) {
       try {
@@ -109,8 +158,8 @@ const App = () => {
       return
     }
 
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission().then((permission) => {
+    if (window.Notification.permission !== "granted") {
+      window.Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
           console.log("Notification permission granted")
         }
@@ -122,19 +171,39 @@ const App = () => {
       todos.forEach((todo) => {
         if (!todo.completed && todo.dueDate) {
           try {
-            const dueDate = new Date(todo.dueDate) // ✅ Define dueDate before using it
-
-            if (dueDate.toDateString() !== now.toDateString()) {
-              return // Skip if not due today
+            const dueDate = new Date(todo.dueDate)
+            
+            // Skip if invalid date
+            if (isNaN(dueDate.getTime())) {
+              return
             }
 
             const timeDiff = dueDate - now
-            if (timeDiff <= 300000 || timeDiff < 0) {
-              // 5 minutes or overdue
-              new Notification(`Todo Reminder: ${todo.title}`, {
-                body: `Due: ${dueDate.toLocaleString()}\nCategory: ${todo.category || "No category"}`,
-                icon: "/todo-icon.png",
-                tag: `todo-reminder-${todo.id}`,
+            const fiveMinutesInMs = 5 * 60 * 1000
+            
+            // Check if due within 5 minutes or overdue (but within last 5 minutes)
+            if (timeDiff > 0 && timeDiff <= fiveMinutesInMs) {
+              // Show in-app notification
+              setNotification({
+                message: `Task "${todo.title}" is due in ${Math.ceil(timeDiff / 60000)} minutes!`,
+                type: "info",
+                duration: 0 // Don't auto-close
+              })
+              
+              // Show browser notification if permitted
+              if (window.Notification.permission === "granted") {
+                new window.Notification(`Todo Reminder: ${todo.title}`, {
+                  body: `Due in ${Math.ceil(timeDiff / 60000)} minutes\nCategory: ${todo.category || "No category"}`,
+                  icon: "/todo-icon.png",
+                  tag: `todo-reminder-${todo.id}`,
+                })
+              }
+            } else if (timeDiff < 0 && timeDiff > -fiveMinutesInMs) {
+              // Overdue notification (only if within 5 minutes of being overdue)
+              setNotification({
+                message: `Task "${todo.title}" is overdue!`,
+                type: "error",
+                duration: 0 // Don't auto-close
               })
             }
           } catch (e) {
@@ -156,27 +225,18 @@ const App = () => {
   }
 
   // ✅ Handle login/logout
-  const handleLogin = () => {
-    // Generate a unique user ID if one doesn't exist yet
-    const userId = localStorage.getItem("userId") || `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-
-    // Store the user ID persistently (so it remains the same across sessions)
-    localStorage.setItem("userId", userId)
-
-    // Store the full user object in session storage (for the current session)
-    const userObj = {
-      id: userId,
-      authenticated: true,
-      loginTime: new Date().toISOString(),
-    }
-
-    sessionStorage.setItem("user", JSON.stringify(userObj))
+  const handleLogin = (user) => {
+    sessionStorage.setItem("user", JSON.stringify(user))
+    setCurrentUser(user)
     setIsAuthenticated(true)
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("user")
+    sessionStorage.removeItem("user")
+    setCurrentUser(null)
     setIsAuthenticated(false)
+    setTodos([])
+    setArchivedTodos([])
   }
 
   // ✅ Create a new todo
@@ -190,17 +250,32 @@ const App = () => {
       dueDate,
     }
     setTodos((prevTodos) => [...prevTodos, newTodo])
+    // Show success notification
+    setNotification({
+      message: "Todo created successfully!",
+      type: "success",
+    })
   }
 
   // ✅ Remove todo
   const removeTodo = (id) => {
     setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id))
+    // Show success notification
+    setNotification({
+      message: "Todo removed successfully!",
+      type: "success",
+    })
   }
 
   // ✅ Modify existing todo
   const changeTodo = (id, title, category, priority, dueDate, completed, elapsedTime = 0) => {
     const updatedTodo = { id, title, category, priority, dueDate, completed, elapsedTime }
     setTodos((prevTodos) => prevTodos.map((todo) => (todo.id === id ? updatedTodo : todo)))
+    // Show success notification
+    setNotification({
+      message: "Todo updated successfully!",
+      type: "success",
+    })
   }
 
   // Archive a completed todo
@@ -209,6 +284,17 @@ const App = () => {
     if (todoToArchive && todoToArchive.completed) {
       setArchivedTodos((prev) => [...prev, todoToArchive])
       setTodos((prev) => prev.filter((todo) => todo.id !== id))
+      // Show success notification
+      setNotification({
+        message: "Todo archived successfully!",
+        type: "success",
+      })
+    } else {
+      // Show error notification if todo is not completed
+      setNotification({
+        message: "Only completed todos can be archived",
+        type: "error",
+      })
     }
   }
 
@@ -218,12 +304,22 @@ const App = () => {
     if (todoToRestore) {
       setTodos((prev) => [...prev, todoToRestore])
       setArchivedTodos((prev) => prev.filter((todo) => todo.id !== id))
+      // Show success notification
+      setNotification({
+        message: "Todo restored successfully!",
+        type: "success",
+      })
     }
   }
 
   // Delete an archived todo
   const deleteArchivedTodo = (id) => {
     setArchivedTodos((prev) => prev.filter((todo) => todo.id !== id))
+    // Show success notification
+    setNotification({
+      message: "Archived todo deleted successfully!",
+      type: "success",
+    })
   }
 
   // Handle selection of todos
@@ -250,7 +346,11 @@ const App = () => {
     const nonCompletedSelectedTodos = selectedTodos.filter((id) => !todos.find((todo) => todo.id === id)?.completed)
 
     if (nonCompletedSelectedTodos.length === 0) {
-      alert("No non-completed todos selected")
+      // Show error notification
+      setNotification({
+        message: "No non-completed todos selected",
+        type: "error",
+      })
       return
     }
 
@@ -258,6 +358,12 @@ const App = () => {
       prevTodos.map((todo) => (nonCompletedSelectedTodos.includes(todo.id) ? { ...todo, completed: true } : todo)),
     )
     setSelectedTodos([])
+
+    // Show success notification
+    setNotification({
+      message: `${nonCompletedSelectedTodos.length} todos marked as completed!`,
+      type: "success",
+    })
   }
 
   // Bulk delete todos
@@ -266,12 +372,22 @@ const App = () => {
     const nonCompletedSelectedTodos = selectedTodos.filter((id) => !todos.find((todo) => todo.id === id)?.completed)
 
     if (nonCompletedSelectedTodos.length === 0) {
-      alert("No non-completed todos selected")
+      // Show error notification
+      setNotification({
+        message: "No non-completed todos selected",
+        type: "error",
+      })
       return
     }
 
     setTodos((prevTodos) => prevTodos.filter((todo) => !nonCompletedSelectedTodos.includes(todo.id)))
     setSelectedTodos([])
+
+    // Show success notification
+    setNotification({
+      message: `${nonCompletedSelectedTodos.length} todos deleted!`,
+      type: "success",
+    })
   }
 
   // Bulk archive todos
@@ -280,7 +396,11 @@ const App = () => {
     const completedSelectedTodos = selectedTodos.filter((id) => todos.find((todo) => todo.id === id)?.completed)
 
     if (completedSelectedTodos.length === 0) {
-      alert("No completed todos selected")
+      // Show error notification
+      setNotification({
+        message: "No completed todos selected",
+        type: "error",
+      })
       return
     }
 
@@ -288,12 +408,22 @@ const App = () => {
     setArchivedTodos((prev) => [...prev, ...todosToArchive])
     setTodos((prev) => prev.filter((todo) => !completedSelectedTodos.includes(todo.id)))
     setSelectedTodos([])
+
+    // Show success notification
+    setNotification({
+      message: `${completedSelectedTodos.length} todos archived!`,
+      type: "success",
+    })
   }
 
   // Modify the exportTodos function to include user information
   const exportTodos = () => {
     if (todos.length === 0) {
-      alert("No todos to export!")
+      // Show error notification
+      setNotification({
+        message: "No todos to export!",
+        type: "error",
+      })
       return
     }
 
@@ -307,7 +437,11 @@ const App = () => {
     const userId = currentUser.id || persistentUserId
 
     if (!userId) {
-      alert("User identification error. Please log out and log in again.")
+      // Show error notification
+      setNotification({
+        message: "User identification error. Please log out and log in again.",
+        type: "error",
+      })
       return
     }
 
@@ -331,6 +465,12 @@ const App = () => {
     link.download = `todos-${new Date().toISOString().slice(0, 10)}.json`
     link.click()
     URL.revokeObjectURL(url)
+
+    // Show success notification
+    setNotification({
+      message: "Todos exported successfully!",
+      type: "success",
+    })
   }
 
   // Modify the importTodos function to check user identity
@@ -354,7 +494,11 @@ const App = () => {
             const currentUserId = currentUser.id || persistentUserId
 
             if (result.user.id !== currentUserId) {
-              alert("This todo list belongs to another user and cannot be imported")
+              // Show error notification
+              setNotification({
+                message: "This todo list belongs to another user and cannot be imported",
+                type: "error",
+              })
               return
             }
           }
@@ -364,12 +508,21 @@ const App = () => {
           if (Array.isArray(result?.archivedTodos)) {
             setArchivedTodos(result.archivedTodos)
           }
-          alert(`Imported ${result.todos.length} todos!`)
+
+          // Show success notification
+          setNotification({
+            message: `Imported ${result.todos.length} todos!`,
+            type: "success",
+          })
         } else {
           throw new Error("Invalid file format")
         }
       } catch (error) {
-        alert("Failed to import: " + error.message)
+        // Show error notification
+        setNotification({
+          message: "Failed to import: " + error.message,
+          type: "error",
+        })
       }
     }
     reader.readAsText(file)
@@ -425,6 +578,9 @@ const App = () => {
                       <div className="dropdown">
                         <button className="dropdown-btn"> ☰ </button>
                         <div className="dropdown-content">
+                          <div className="dropdown-welcome">
+                            Welcome, {currentUser?.username || currentUser?.name || "User"}!
+                          </div>
                           <label className="import-label">
                             {t("import")}
                             <input type="file" accept=".json" onChange={handleFileChange} style={{ display: "none" }} />
@@ -451,6 +607,16 @@ const App = () => {
                       </div>
                     </div>
                   </header>
+
+                  {/* In-app notification */}
+                  {notification && (
+                    <AppNotification
+                      message={notification.message}
+                      type={notification.type}
+                      duration={notification.duration}
+                      onClose={() => setNotification(null)}
+                    />
+                  )}
 
                   {/* Controls bar with sort on left, language and dark mode on right */}
                   <div className="controls-bar">
@@ -546,6 +712,8 @@ const App = () => {
                         selectedTodos={selectedTodos}
                         onSelectTodo={handleSelectTodo}
                         reorderTodos={reorderTodos}
+                        formatDateTime={formatDateTime}
+                        isDueSoon={isDueSoon}
                       />
                       <TodoCreate createTodo={createTodo} />
                     </div>

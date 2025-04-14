@@ -13,6 +13,8 @@ const TodoList = ({
   selectedTodos,
   onSelectTodo,
   reorderTodos,
+  formatDateTime,
+  isDueSoon
 }) => {
   const { t } = useLanguage()
   const [draggedTodo, setDraggedTodo] = useState(null)
@@ -210,6 +212,8 @@ const TodoList = ({
       onDrop={(e) => handleDrop(e, todo)}
       isDraggedOver={dragOverTodoId === todo.id}
       isDragging={draggedTodo && draggedTodo.id === todo.id}
+      formatDateTime={formatDateTime}
+      isDueSoon={isDueSoon}
     />
   ))
 

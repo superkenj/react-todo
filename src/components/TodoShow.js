@@ -1,7 +1,7 @@
 "use client"
 
-import TodoEdit from "./TodoEdit"
 import { useState, useRef, useEffect } from "react"
+import { useLanguage } from "../context/LanguageContext"
 import EditIcon from "../edit.svg"
 import DeleteIcon from "../delete.svg"
 import DoneIcon from "../g_check.svg"
@@ -25,159 +25,211 @@ const TodoShow = ({
   onDrop,
   isDraggedOver,
   isDragging,
+  formatDateTime,
+  isDueSoon
 }) => {
-  const [showEdit, setShowEdit] = useState(false)
+  const { t } = useLanguage()
+  const [isEditing, setIsEditing] = useState(false)
+  const [title, setTitle] = useState(todo.title)
+  const [category, setCategory] = useState(todo.category)
+  const [priority, setPriority] = useState(todo.priority)
+  const [dueDate, setDueDate] = useState(todo.dueDate || "")
   const [isTimerRunning, setIsTimerRunning] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(todo.elapsedTime || 0)
   const timerRef = useRef(null)
   const todoRef = useRef(null)
+  
+  // Check if the todo is due soon
+  const dueSoon = isDueSoon ? isDueSoon(todo.dueDate) : false;
 
-  // Format time as HH:MM:SS
-  const formatTime = (timeInSeconds) => {
-    const hours = Math.floor(timeInSeconds / 3600)
-    const minutes = Math.floor((timeInSeconds % 3600) / 60)
-    const seconds = timeInSeconds % 60
+  // Determine if the todo is draggable
+  const isDraggable = draggable && !todo.completed
 
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-  }
+  // Set up classes for the todo item
+  const todoClasses = `todo ${todo.completed ? "completed" : ""} ${dueSoon ? "due-soon" : ""} ${
+    isDraggedOver ? "drag-over" : ""
+  } ${isDragging ? "dragging" : ""}`
 
-  // Handle timer start/stop
-  const toggleTimer = () => {
-    if (todo.completed) return
-
+  // Handle timer
+  useEffect(() => {
     if (isTimerRunning) {
-      // Stop timer
-      clearInterval(timerRef.current)
-      timerRef.current = null
-      setIsTimerRunning(false)
-
-      // Save elapsed time to todo
-      changeTodo(todo.id, todo.title, todo.category, todo.priority, todo.dueDate, todo.completed, elapsedTime)
-    } else {
-      // Start timer
-      setIsTimerRunning(true)
       timerRef.current = setInterval(() => {
         setElapsedTime((prev) => prev + 1)
       }, 1000)
-    }
-  }
-
-  // Clean up timer on unmount
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-      }
-    }
-  }, [])
-
-  // Stop timer when todo is completed
-  useEffect(() => {
-    if (todo.completed && isTimerRunning) {
+    } else {
       clearInterval(timerRef.current)
-      timerRef.current = null
-      setIsTimerRunning(false)
-
-      // Save final elapsed time
-      changeTodo(todo.id, todo.title, todo.category, todo.priority, todo.dueDate, todo.completed, elapsedTime)
     }
-  }, [
-    todo.completed,
-    isTimerRunning,
-    elapsedTime,
-    changeTodo,
-    todo.id,
-    todo.title,
-    todo.category,
-    todo.priority,
-    todo.dueDate,
-  ])
 
-  const formatDueDate = (dateTimeString) => {
-    if (!dateTimeString) return "No due date"
+    return () => clearInterval(timerRef.current)
+  }, [isTimerRunning])
 
-    const date = new Date(dateTimeString)
-    const formattedDate = date.toISOString().split("T")[0]
-    let hours = date.getHours()
-    const ampm = hours >= 12 ? "PM" : "AM"
-    hours = hours % 12
-    hours = hours ? hours : 12
-    const minutes = date.getMinutes().toString().padStart(2, "0")
+  // Format time for display
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const secs = seconds % 60
 
-    return `${formattedDate} ${hours}:${minutes} ${ampm}`
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`
   }
 
-  const handleDelete = () => {
-    if (!todo.completed) {
-      removeTodo(todo.id)
+  // Format due date for display
+  const formatDueDate = (dateString) => {
+    if (formatDateTime) {
+      return formatDateTime(dateString);
+    }
+    
+    if (!dateString) return "No due date"
+
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return "Invalid date"
+
+      return date.toLocaleString()
+    } catch (e) {
+      console.error("Error formatting date:", e)
+      return "Invalid date"
     }
   }
 
+  // Get style for priority
+  const getPriorityStyle = (priority) => {
+    switch (priority) {
+      case "High":
+        return { backgroundColor: "#f44336" }
+      case "Medium":
+        return { backgroundColor: "#ffc107" }
+      case "Low":
+        return { backgroundColor: "#4caf50" }
+      default:
+        return { backgroundColor: "#808080" }
+    }
+  }
+
+  // Handle checkbox change
+  const handleSelect = (e) => {
+    onSelectTodo(todo.id, e.target.checked)
+  }
+
+  // Handle edit button click
   const handleEdit = () => {
-    if (!todo.completed) {
-      setShowEdit(true)
-    }
+    setIsEditing(true)
   }
 
+  // Handle delete button click
+  const handleDelete = () => {
+    removeTodo(todo.id)
+  }
+
+  // Handle toggle complete button click
   const handleToggleComplete = () => {
+    // Stop timer if running
+    if (isTimerRunning) {
+      setIsTimerRunning(false)
+    }
+
+    // Update todo
     changeTodo(todo.id, todo.title, todo.category, todo.priority, todo.dueDate, !todo.completed, elapsedTime)
   }
 
+  // Handle archive button click
   const handleArchive = () => {
-    if (todo.completed && archiveTodo) {
-      archiveTodo(todo.id)
+    archiveTodo(todo.id)
+  }
+
+  // Toggle timer
+  const toggleTimer = () => {
+    if (todo.completed) return
+
+    setIsTimerRunning(!isTimerRunning)
+
+    // If stopping timer, update the todo with the elapsed time
+    if (isTimerRunning) {
+      changeTodo(todo.id, todo.title, todo.category, todo.priority, todo.dueDate, todo.completed, elapsedTime)
     }
   }
 
-  const handleSelect = (e) => {
-    if (onSelectTodo) {
-      onSelectTodo(todo.id, e.target.checked)
-    }
-  }
-
-  const handleSubmit = (id, title, category, priority, dueDate) => {
-    changeTodo(id, title, category, priority, dueDate, todo.completed, elapsedTime)
-    setShowEdit(false)
-  }
-
-  const getPriorityStyle = (priority) => {
-    switch (priority.toLowerCase()) {
-      case "high":
-        return { backgroundColor: "#ff4d4d", color: "#fff" }
-      case "medium":
-        return { backgroundColor: "#ffcc00", color: "#000" }
-      case "low":
-        return { backgroundColor: "#4caf50", color: "#fff" }
-      default:
-        return { backgroundColor: "#ccc", color: "#000" }
-    }
-  }
-
-  if (showEdit) {
-    return (
-      <li className="todo">
-        <TodoEdit todo={todo} onSubmit={handleSubmit} />
-      </li>
-    )
-  }
-
-  // Determine the CSS classes for drag and drop
-  const todoClasses = `todo ${isDraggedOver ? "drag-over" : ""} ${isDragging ? "dragging" : ""}`
-
-  // Custom drag start handler to fix desktop issues
+  // Handle drag start
   const handleDragStart = (e) => {
     if (onDragStart) {
-      // Set the drag image to the todo element
-      if (todoRef.current) {
-        const rect = todoRef.current.getBoundingClientRect()
-        e.dataTransfer.setDragImage(todoRef.current, rect.width / 2, rect.height / 2)
-      }
       onDragStart(e)
     }
   }
 
-  // Only make non-completed todos draggable
-  const isDraggable = draggable && !todo.completed
+  // Convert dueDate to datetime-local format for the input
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return ""
+
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return ""
+
+      // Format as YYYY-MM-DDTHH:MM
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, "0")
+      const day = String(date.getDate()).padStart(2, "0")
+      const hours = String(date.getHours()).padStart(2, "0")
+      const minutes = String(date.getMinutes()).padStart(2, "0")
+
+      return `${year}-${month}-${day}T${hours}:${minutes}`
+    } catch (e) {
+      console.error("Error formatting date for input:", e)
+      return ""
+    }
+  }
+
+  // Handle edit form submission
+  const handleEditSubmit = (e) => {
+    e.preventDefault()
+    changeTodo(todo.id, title, category, priority, dueDate, todo.completed, elapsedTime)
+    setIsEditing(false)
+  }
+
+  // Render edit form
+  if (isEditing) {
+    return (
+      <li className="todo">
+        <form onSubmit={handleEditSubmit} className="todo-edit">
+          <div className="edit-title-row">
+            <input
+              type="text"
+              className="edit-title-input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
+          <div className="edit-fields-row">
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Study">Study</option>
+              <option value="Health">Health</option>
+              <option value="Other">Other</option>
+            </select>
+            <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+            <input
+              type="datetime-local"
+              value={formatDateForInput(dueDate)}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+            <button type="submit" className="submit-btn">
+              {t("save")}
+            </button>
+            <button type="button" className="cancel-btn" onClick={() => setIsEditing(false)}>
+              {t("cancel")}
+            </button>
+          </div>
+        </form>
+      </li>
+    )
+  }
 
   return (
     <li
@@ -217,7 +269,7 @@ const TodoShow = ({
             {todo.priority}
           </p>
           <p className="category">{todo.category}</p>
-          <p className="due-date">{formatDueDate(todo.dueDate)}</p>
+          <p className={`due-date ${dueSoon ? "due-soon" : ""}`}>{formatDueDate(todo.dueDate)}</p>
         </div>
 
         <div className="actions-row">

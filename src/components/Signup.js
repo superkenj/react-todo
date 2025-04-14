@@ -26,15 +26,30 @@ const Signup = () => {
         return;
       }
 
+      // Create a new user with a unique ID
       const newUser = {
-        id: uuidv4(),
+        id: uuidv4(), // This ensures a truly unique ID for user binding
         name,
         email,
         password,
+        createdAt: new Date().toISOString()
       };
 
       const updatedUsers = [...existingUsers, newUser];
       localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+      // Auto-login the new user (optional)
+      // If you want to auto-login, uncomment these lines:
+      /*
+      sessionStorage.setItem("user", JSON.stringify({
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        username: newUser.name, // Add username for display in welcome message
+        authenticated: true,
+        loginTime: new Date().toISOString()
+      }));
+      */
 
       navigate("/login");
     } catch (error) {
